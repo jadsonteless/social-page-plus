@@ -1,0 +1,13 @@
+.button-componets {
+  width: 100%;
+  background: darkblue;
+  color: white;
+  border: none;
+  margin-top: 20px;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+.button-componets:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
