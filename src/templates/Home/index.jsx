@@ -1,29 +1,87 @@
 import './home.css'
-import { Component } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { LoadPost } from '../../components/LoadPost'
+import { PostsContent } from '../../components/PostsContent'
+import { Button } from '../../components/Button';
+import { TextInput } from '../../components/TextInput';
+
+export const Home = () => {
+  const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
+  const [page, setPage] = useState([0]);
+  const [postsPerPage] = useState([10]);
+  const [searchValue, setSearchValue] = useState('');
+
+  const noMorePost = posts >= allPosts; // logica para desabilitar o button quando quantidade de post for igual ou superiro ao total de post da api
+
+  const filterPosts = !!searchValue ? allPosts.filter((post) => {
+    return post.title.toLowerCase().includes(searchValue.toLowerCase())
+  }) : posts;
+  
+  const handleLoadPosts = useCallback(async (page, postsPerPage) => {
+    const postsAndFotos = await LoadPost();
+
+    setPosts(postsAndFotos.slice(page, postsPerPage));
+    setAllPosts(postsAndFotos);
+  }, [])
+
+  useEffect(() => {
+    handleLoadPosts(0, postsPerPage);
+  }, [handleLoadPosts, postsPerPage]);
 
 
-export class Home extends Component {
-  state = {
-    contador: 0,
+  const loadMorePosts = () => {
+    const nextPage = page + postsPerPage; // > 2 > 6
+    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage); // > (2, 4) 
+    posts.push(...nextPosts) // ... utilizado para concatena aproveita o resto dos posta dentro da array
+
+    setPosts(posts);
+    setPage(nextPage);
   }
 
-  handleClick = () => {
-    this.setState(
-      (prevState, prevProps) => {
-        console.log('PREVIA', prevProps.numberTeste)
-        return {contador: prevState.contador + 1}
-      }, 
-      () => {
-      console.log('Setado',this.state.contador)
-    })
+  const handleChange = (e) => {
+    const { value } = e.target;
+
+    setSearchValue(value);
   }
-  render() {
-    return (
-      <div>
-        <h1>{this.state.contador}</h1> {/* saída: 0 */}
-        <button onClick={this.handleClick}>Increment</button>
+
+  return (
+    <section className='container'>
+      <div className='search-container'>
+        {!!searchValue && ( // !! = true, ou seja se tiver alguem digitando
+          <h1>{searchValue}</h1>
+        )}
+        <TextInput
+          searchValue={searchValue}
+          handleChange={handleChange}
+        />
       </div>
-    )
-  }
+
+      {filterPosts.length > 0 ? ( // se a quantidade de post for maior q 0 entao mostre ()
+        <PostsContent posts={filterPosts} />
+      ) : ( // se não
+        <p>Post não encontrado!</p>)}
+
+      <div className='container-button'>
+        {!searchValue && ( // ! false, se nao tiver busca
+          <Button disabled={noMorePost} text={'botao'} onClick={loadMorePosts} />
+        )}
+      </div>
+    </section>
+  );
 }
+
+// class Home2 extends Component {
+//   async componentDidMount() {
+//     await this.loadPosts()
+//   };
+
+
+
+//   render() {
+
+
+//   }
+// }
+
 export default Home;
