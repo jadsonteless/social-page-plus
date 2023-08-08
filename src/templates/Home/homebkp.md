@@ -1,3 +1,5 @@
+```jsx
+// # Backup do index
 import './home.css'
 import { useEffect, useState, useCallback } from 'react';
 import { LoadPost } from '../../components/LoadPost'
@@ -85,3 +87,4 @@ export const Home = () => {
 // }
 
 export default Home;
+```

@@ -1,3 +1,5 @@
+```jsx
+// # Exeplo de utilização de this.
 import './home.css'
 import { Component } from 'react';
 
@@ -27,3 +29,4 @@ export class Home extends Component {
   }
 }
 export default Home;
+```
